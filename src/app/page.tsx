@@ -285,7 +285,7 @@ export default function Home() {
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 text-sm text-gray-500 md:flex-row md:items-center md:justify-between">
           <span className="font-bold text-[#176b45]">contri q.</span>
           <span>Contributions without the confusion.</span>
-          <span>© {new Date().getFullYear()} Contriq.</span>
+          <span>© 2026 Contriq.</span>
         </div>
       </footer>
     </main>
