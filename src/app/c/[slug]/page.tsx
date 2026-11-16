@@ -11,6 +11,10 @@ function formatNaira(kobo: number) {
   }).format(kobo / 100);
 }
 
+function isPastDeadline(deadline: string | null) {
+  return deadline ? new Date(deadline).getTime() < Date.now() : false;
+}
+
 async function CampaignContent({
   params,
 }: {
@@ -44,10 +48,8 @@ async function CampaignContent({
     Math.round((totalCollected / campaign.target_amount) * 100)
   );
 
-  const closed = campaign.deadline
-    ? new Date(campaign.deadline).getTime() < Date.now()
-    : false;
-
+   const closed = isPastDeadline(campaign.deadline);
+   
   return (
     <main className="min-h-screen bg-sand px-4 py-10">
       <div className="mx-auto max-w-xl space-y-6">

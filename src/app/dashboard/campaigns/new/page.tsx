@@ -12,7 +12,7 @@ export default function NewCampaignPage() {
           New campaign
         </h1>
         <p className="mb-6 mt-1 text-sm text-mocha/70">
-          You'll get a public link to share once it's created.
+          You&apos;ll get a public link to share once it&apos;s created.
         </p>
         <div className="rounded-xl border border-mocha/15 bg-white/60 p-8">
           <CampaignForm />

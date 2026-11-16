@@ -69,12 +69,20 @@ async function DashboardContent() {
                 <p className="mt-1 text-sm text-mocha/70">
                   Target: {formatNaira(c.target_amount)}
                 </p>
-                <Link
-                  href={`/c/${c.slug}`}
-                  className="mt-1 inline-block text-sm text-mocha underline"
-                >
-                  View public page: /c/{c.slug}
-                </Link>
+                <div className="mt-2 flex flex-wrap gap-4 text-sm">
+                  <Link
+                    href={`/dashboard/campaigns/${c.id}`}
+                    className="font-medium text-mocha underline"
+                  >
+                    View payments
+                  </Link>
+                  <Link
+                    href={`/c/${c.slug}`}
+                    className="text-mocha underline"
+                  >
+                    Public page: /c/{c.slug}
+                  </Link>
+                </div>
               </li>
             ))}
           </ul>
