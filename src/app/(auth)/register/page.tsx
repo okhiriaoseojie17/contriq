@@ -51,61 +51,69 @@ export default function RegisterPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-sand px-4">
-      <div className="w-full max-w-md rounded-xl border border-mocha/15 bg-white/60 p-8">
-        <h1 className="text-2xl font-semibold text-mocha">Create your account</h1>
-        <p className="mt-1 text-sm text-mocha/70">
-          Start collecting contributions in minutes.
-        </p>
+      <div className="w-full max-w-md">
+        <Link href="/" className="text-sm text-mocha/70 underline">
+          ← Back to home
+        </Link>
 
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="fullName">Full name</Label>
-            <Input
-              id="fullName"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
+        <div className="mt-4 rounded-xl border border-mocha/15 bg-white/60 p-8">
+          <h1 className="text-2xl font-semibold text-mocha">
+            Create your account
+          </h1>
+          <p className="mt-1 text-sm text-mocha/70">
+            Start collecting contributions in minutes.
+          </p>
 
-          {error && <p className="text-sm text-red-700">{error}</p>}
-          {message && <p className="text-sm text-mocha">{message}</p>}
+          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="fullName">Full name</Label>
+              <Input
+                id="fullName"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
 
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-melon text-mocha hover:bg-melon/90"
-          >
-            {loading ? "Creating account..." : "Create account"}
-          </Button>
-        </form>
+            {error && <p className="text-sm text-red-700">{error}</p>}
+            {message && <p className="text-sm text-mocha">{message}</p>}
 
-        <p className="mt-6 text-center text-sm text-mocha/70">
-          Already have an account?{" "}
-          <Link href="/login" className="font-medium text-mocha underline">
-            Log in
-          </Link>
-        </p>
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-melon text-mocha hover:bg-melon/90"
+            >
+              {loading ? "Creating account..." : "Create account"}
+            </Button>
+          </form>
+
+          <p className="mt-6 text-center text-sm text-mocha/70">
+            Already have an account?{" "}
+            <Link href="/login" className="font-medium text-mocha underline">
+              Log in
+            </Link>
+          </p>
+        </div>
       </div>
     </main>
   );

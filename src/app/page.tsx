@@ -85,18 +85,25 @@ export default function Home() {
           </a>
         </div>
 
-        <a
-          href="#get-started"
-          className="flex items-center gap-2 rounded-full bg-mocha px-5 py-3 text-sm font-semibold text-sand transition hover:bg-mocha/90"
-        >
-          Get started <ArrowUpRight size={16} />
-        </a>
+        <div className="flex items-center gap-4">
+          <Link
+            href="/login"
+            className="text-sm font-medium text-mocha hover:underline"
+          >
+            Log in
+          </Link>
+          <Link
+            href="/register"
+            className="flex items-center gap-2 rounded-full bg-mocha px-5 py-3 text-sm font-semibold text-sand transition hover:bg-mocha/90"
+          >
+            Get started <ArrowUpRight size={16} />
+          </Link>
+        </div>
       </nav>
 
       {/* Hero */}
       <section className="mx-auto grid max-w-7xl items-center gap-16 px-6 pb-24 pt-16 md:grid-cols-2 md:pt-24">
         <div>
-
           <h1 className="max-w-xl text-5xl font-semibold leading-[1.12] tracking-tight md:text-7xl">
             Contributions without the confusion.
           </h1>
@@ -108,12 +115,12 @@ export default function Home() {
           </p>
 
           <div className="mt-9 flex flex-wrap gap-4">
-            <a
-              href="#get-started"
+            <Link
+              href="/register"
               className="flex items-center gap-3 rounded-full bg-melon px-7 py-4 font-semibold text-mocha transition hover:bg-melon/90"
             >
               Start a contribution <ArrowRight size={18} />
-            </a>
+            </Link>
             <a
               href="#how-it-works"
               className="rounded-full border border-border bg-card px-7 py-4 font-semibold transition hover:bg-muted"
@@ -266,12 +273,12 @@ export default function Home() {
             Bring your group together with a clearer, more accountable
             way to manage shared contributions.
           </p>
-          <a
-            href="#"
+          <Link
+            href="/register"
             className="mt-8 inline-flex items-center gap-3 rounded-full bg-melon px-7 py-4 font-semibold text-mocha transition hover:bg-melon/90"
           >
-            Coming soon <ArrowRight size={18} />
-          </a>
+            Create a campaign <ArrowRight size={18} />
+          </Link>
         </div>
       </section>
 
