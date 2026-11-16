@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Lock } from "lucide-react";
 import { startPayment } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,11 +46,13 @@ export function ContributeForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+    <form onSubmit={handleSubmit} className="mt-5 space-y-4">
       <div className="space-y-2">
         <Label htmlFor="payer-name">Your name</Label>
         <Input
           id="payer-name"
+          autoComplete="name"
+          className="h-11 bg-white/70"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
@@ -60,6 +63,8 @@ export function ContributeForm({
         <Input
           id="payer-email"
           type="email"
+          autoComplete="email"
+          className="h-11 bg-white/70"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -67,9 +72,12 @@ export function ContributeForm({
       </div>
 
       {fixedAmountKobo ? (
-        <p className="text-sm">
-          Amount: <span className="font-medium">{formatNaira(fixedAmountKobo)}</span>
-        </p>
+        <div className="flex items-center justify-between rounded-2xl bg-mocha/5 px-4 py-3">
+          <span className="text-sm text-mocha/70">Amount per person</span>
+          <span className="text-lg font-bold">
+            {formatNaira(fixedAmountKobo)}
+          </span>
+        </div>
       ) : (
         <div className="space-y-2">
           <Label htmlFor="payer-amount">Amount (₦)</Label>
@@ -77,6 +85,7 @@ export function ContributeForm({
             id="payer-amount"
             inputMode="decimal"
             placeholder="5000"
+            className="h-11 bg-white/70"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             required
@@ -84,15 +93,24 @@ export function ContributeForm({
         </div>
       )}
 
-      {error && <p className="text-sm text-red-700">{error}</p>}
+      {error && (
+        <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+          {error}
+        </p>
+      )}
 
       <Button
         type="submit"
         disabled={loading}
-        className="w-full bg-melon text-mocha hover:bg-melon/90"
+        className="h-12 w-full rounded-full bg-melon text-base font-semibold text-mocha hover:bg-melon/90"
       >
-        {loading ? "Please wait..." : "Contribute"}
+        {loading ? "Taking you to checkout..." : "Contribute"}
       </Button>
+
+      <p className="flex items-center justify-center gap-1.5 text-xs text-mocha/60">
+        <Lock size={12} />
+        Secure checkout. Your card details never touch Contriq.
+      </p>
     </form>
   );
 }
