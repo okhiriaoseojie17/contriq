@@ -95,7 +95,7 @@ export function EditForm({
         <span>
           Stop accepting payments once the goal is reached
           <span className="block text-xs text-mocha/60">
-            Contributors can't pay more than the amount remaining.
+            Contributors can&apos;t pay more than the amount remaining.
           </span>
         </span>
       </label>
