@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { SiteFooter } from "@/components/site-footer";
+import { RouteFade } from "@/components/route-fade";
 
 export const metadata: Metadata = {
   // Set NEXT_PUBLIC_SITE_URL in Vercel to your live URL so share previews work.
@@ -35,7 +37,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <RouteFade />
+<div className="flex min-h-screen flex-col">
+  <div className="flex-1">
+    <RouteFade />
+<div className="flex min-h-screen flex-col">
+  <div className="flex-1">{children}</div>
+  <SiteFooter />
+</div>
+  </div>
+  <SiteFooter />
+</div>
+      </body>
     </html>
   );
 }

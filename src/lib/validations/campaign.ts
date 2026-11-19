@@ -22,6 +22,7 @@ export const campaignSchema = z.object({
       "Enter a valid amount, or leave blank"
     ),
   deadline: z.string(),
+  stopAtGoal: z.boolean().optional(),
 });
 
 export type CampaignFormValues = z.infer<typeof campaignSchema>;

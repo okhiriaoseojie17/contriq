@@ -1,8 +1,9 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { CalendarClock, HeartHandshake, Users } from "lucide-react";
+import { CalendarClock, HeartHandshake, Scale, Users } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { BrandLogo } from "@/components/brand-logo";
+import { HomeLogo } from "@/components/home-logo";
+import { ShareButton } from "@/components/share-button";
 import { ContributeForm } from "./contribute-form";
 
 function formatNaira(kobo: number) {
@@ -40,7 +41,9 @@ async function CampaignContent({
 
   const { data: campaign } = await supabase
     .from("campaigns")
-    .select("id, title, description, target_amount, fixed_amount, deadline")
+    .select(
+      "id, title, description, target_amount, fixed_amount, deadline, stop_at_goal"
+    )
     .eq("slug", slug)
     .maybeSingle();
 
@@ -56,14 +59,14 @@ async function CampaignContent({
     { p_campaign_id: campaign.id, p_limit: 10 }
   );
 
+  const target = Number(campaign.target_amount);
   const totalCollected: number = Number(progressRows?.[0]?.total_collected ?? 0);
   const paymentCount: number = Number(progressRows?.[0]?.payment_count ?? 0);
-  const percent = Math.min(
-    100,
-    Math.round((totalCollected / campaign.target_amount) * 100)
-  );
+  const percent = Math.min(100, Math.round((totalCollected / target) * 100));
+  const balance = Math.max(0, target - totalCollected);
 
   const closed = isPastDeadline(campaign.deadline);
+  const goalReached = campaign.stop_at_goal && totalCollected >= target;
   const daysLeft = campaign.deadline && !closed ? daysUntil(campaign.deadline) : null;
 
   return (
@@ -75,28 +78,35 @@ async function CampaignContent({
 
       <div className="relative mx-auto max-w-xl space-y-5">
         <div className="flex justify-center">
-          <BrandLogo />
+          <HomeLogo />
         </div>
 
         {/* Campaign summary */}
         <section className="rounded-3xl border border-border bg-card p-8 text-mocha shadow-xl shadow-mocha/10">
-          <div className="flex flex-wrap items-center gap-2">
-            {closed ? (
-              <span className="rounded-full bg-mocha/10 px-3 py-1 text-xs font-medium">
-                Closed
-              </span>
-            ) : daysLeft !== null ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-melon/25 px-3 py-1 text-xs font-medium">
-                <CalendarClock size={13} />
-                {daysLeft === 0
-                  ? "Last day"
-                  : `${daysLeft} ${daysLeft === 1 ? "day" : "days"} left`}
-              </span>
-            ) : (
-              <span className="rounded-full bg-melon/25 px-3 py-1 text-xs font-medium">
-                Open for contributions
-              </span>
-            )}
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              {goalReached ? (
+                <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">
+                  Goal reached
+                </span>
+              ) : closed ? (
+                <span className="rounded-full bg-mocha/10 px-3 py-1 text-xs font-medium">
+                  Closed
+                </span>
+              ) : daysLeft !== null ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-melon/25 px-3 py-1 text-xs font-medium">
+                  <CalendarClock size={13} />
+                  {daysLeft === 0
+                    ? "Last day"
+                    : `${daysLeft} ${daysLeft === 1 ? "day" : "days"} left`}
+                </span>
+              ) : (
+                <span className="rounded-full bg-melon/25 px-3 py-1 text-xs font-medium">
+                  Open for contributions
+                </span>
+              )}
+            </div>
+            <ShareButton slug={slug} title={campaign.title} />
           </div>
 
           <h1 className="mt-4 text-3xl font-semibold leading-tight tracking-tight">
@@ -113,7 +123,7 @@ async function CampaignContent({
               {formatNaira(totalCollected)}
             </p>
             <p className="mt-1 text-sm text-mocha/70">
-              raised of {formatNaira(campaign.target_amount)} goal
+              raised of {formatNaira(target)} goal
             </p>
 
             <div className="mt-4 h-3.5 w-full overflow-hidden rounded-full bg-mocha/10">
@@ -123,11 +133,16 @@ async function CampaignContent({
               />
             </div>
 
-            <div className="mt-4 grid grid-cols-2 gap-3">
+            <div className="mt-4 grid grid-cols-3 gap-3">
               <div className="rounded-2xl bg-mocha/5 p-4">
                 <HeartHandshake size={18} className="text-mocha" />
                 <p className="mt-2 text-xl font-bold">{percent}%</p>
-                <p className="text-xs text-mocha/70">of the goal reached</p>
+                <p className="text-xs text-mocha/70">of the goal</p>
+              </div>
+              <div className="rounded-2xl bg-mocha/5 p-4">
+                <Scale size={18} className="text-mocha" />
+                <p className="mt-2 text-xl font-bold">{formatNaira(balance)}</p>
+                <p className="text-xs text-mocha/70">still needed</p>
               </div>
               <div className="rounded-2xl bg-mocha/5 p-4">
                 <Users size={18} className="text-mocha" />
@@ -154,7 +169,12 @@ async function CampaignContent({
         {/* Contribute */}
         <section className="rounded-3xl border border-border bg-card p-8 text-mocha shadow-lg shadow-mocha/5">
           <h2 className="text-xl font-semibold">Contribute</h2>
-          {closed ? (
+          {goalReached ? (
+            <p className="mt-2 text-sm text-mocha/70">
+              This campaign has reached its goal. Thank you to everyone who
+              contributed.
+            </p>
+          ) : closed ? (
             <p className="mt-2 text-sm text-mocha/70">
               This campaign has closed and is no longer taking contributions.
             </p>
@@ -166,6 +186,7 @@ async function CampaignContent({
               <ContributeForm
                 slug={slug}
                 fixedAmountKobo={campaign.fixed_amount}
+                remainingKobo={campaign.stop_at_goal ? balance : null}
               />
             </>
           )}

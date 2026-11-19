@@ -105,3 +105,36 @@
     @apply font-sans;
   }
 }
+
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+main {
+  transition: opacity 180ms ease-in;
+}
+
+main:not([aria-busy="true"]) {
+  animation: page-fade-in 350ms ease-out;
+}
+
+html.page-leaving main {
+  opacity: 0;
+}
+
+/* Keeps the footer near the bottom of the screen on short pages. */
+main.min-h-screen {
+  min-height: calc(100vh - 10rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main {
+    animation: none !important;
+    transition: none;
+  }
+}

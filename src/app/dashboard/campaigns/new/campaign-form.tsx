@@ -28,6 +28,7 @@ export function CampaignForm() {
       targetAmount: "",
       fixedAmount: "",
       deadline: "",
+      stopAtGoal: false,
     },
   });
 
@@ -115,6 +116,21 @@ export function CampaignForm() {
           <p className="text-sm text-red-700">{errors.fixedAmount.message}</p>
         )}
       </div>
+
+      <label className="flex items-start gap-3 text-sm">
+        <input
+          type="checkbox"
+          className="mt-1 h-4 w-4 accent-[#474329]"
+          {...register("stopAtGoal")}
+        />
+        <span>
+          Stop accepting payments once the goal is reached
+          <span className="block text-xs text-mocha/60">
+            Contributors can&apos;t pay more than the amount remaining. Leave
+            unticked to keep collecting after the goal.
+          </span>
+        </span>
+      </label>
 
       {serverError && (
         <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">

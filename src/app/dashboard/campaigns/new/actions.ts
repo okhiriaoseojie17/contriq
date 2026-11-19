@@ -48,6 +48,7 @@ export async function createCampaign(
     slug,
     target_amount: toKobo(data.targetAmount),
     fixed_amount: data.fixedAmount ? toKobo(data.fixedAmount) : null,
+        stop_at_goal: data.stopAtGoal ?? false,
     deadline: data.deadline
       ? new Date(`${data.deadline}T23:59:59+01:00`).toISOString()
       : null,

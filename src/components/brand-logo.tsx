@@ -1,9 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export function BrandLogo({ className = "h-9" }: { className?: string }) {
+export function BrandLogo({
+  className = "h-9",
+  href = "/",
+}: {
+  className?: string;
+  href?: string;
+}) {
   return (
-    <Link href="/" aria-label="Contriq home" className="inline-block">
+    <Link
+      href={href}
+      aria-label={href === "/" ? "Contriq home" : "Contriq dashboard"}
+      className="inline-block"
+    >
       <Image
         src="/logo-nav.svg"
         alt="Contriq"

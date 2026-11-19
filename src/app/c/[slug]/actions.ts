@@ -7,14 +7,58 @@ import { getActiveProviderName, getProvider } from "@/lib/payments";
 
 const MIN_KOBO = 10000; // ₦100 minimum
 
+function formatNaira(kobo: number) {
+  return new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+    maximumFractionDigits: 0,
+  }).format(kobo / 100);
+}
+
 const inputSchema = z.object({
   slug: z.string().min(1),
   name: z.string().trim().min(2, "Please enter your name").max(100),
-  email: z.string().trim().email("Please enter a valid email").max(200),
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .email("Please enter a valid email")
+    .max(200),
   amount: z.string().trim(),
 });
 
 type Result = { checkoutUrl: string } | { error: string };
+
+// Used by the contribution form to warn before someone pays again.
+export async function checkPriorPayment(input: {
+  slug: string;
+  email: string;
+}): Promise<{ used: boolean }> {
+  const parsed = z
+    .object({
+      slug: z.string().min(1),
+      email: z.string().trim().toLowerCase().email(),
+    })
+    .safeParse(input);
+  if (!parsed.success) return { used: false };
+
+  const admin = createAdminClient();
+  const { data: campaign } = await admin
+    .from("campaigns")
+    .select("id")
+    .eq("slug", parsed.data.slug)
+    .maybeSingle();
+  if (!campaign) return { used: false };
+
+  const { count } = await admin
+    .from("payments")
+    .select("id", { count: "exact", head: true })
+    .eq("campaign_id", campaign.id)
+    .eq("payer_email", parsed.data.email)
+    .eq("status", "success");
+
+  return { used: (count ?? 0) > 0 };
+}
 
 export async function startPayment(input: {
   slug: string;
@@ -32,7 +76,7 @@ export async function startPayment(input: {
 
   const { data: campaign } = await admin
     .from("campaigns")
-    .select("id, fixed_amount, deadline, is_active")
+    .select("id, fixed_amount, target_amount, stop_at_goal, deadline, is_active")
     .eq("slug", slug)
     .maybeSingle();
 
@@ -55,6 +99,23 @@ export async function startPayment(input: {
   }
   if (amountKobo < MIN_KOBO) {
     return { error: "The minimum contribution is ₦100." };
+  }
+
+  // Stop at goal: enforced here, so the browser cannot bypass it.
+  if (campaign.stop_at_goal) {
+    const { data: progress } = await admin.rpc("campaign_progress", {
+      p_campaign_id: campaign.id,
+    });
+    const raised = Number(progress?.[0]?.total_collected ?? 0);
+    const remaining = Number(campaign.target_amount) - raised;
+    if (remaining <= 0) {
+      return { error: "This campaign has reached its goal." };
+    }
+    if (amountKobo > remaining) {
+      return {
+        error: `Maximum reached. Only ${formatNaira(remaining)} is left to reach the goal.`,
+      };
+    }
   }
 
   const providerName = getActiveProviderName();
