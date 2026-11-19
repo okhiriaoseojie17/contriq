@@ -31,9 +31,9 @@ export async function settlePayment(reference: string): Promise<SettleResult> {
   }
 
   // Ask the provider for the real status. Never trust the browser or the webhook body alone.
-  const provider = getProvider(payment.provider as ProviderName);
   let verified;
   try {
+    const provider = getProvider(payment.provider as ProviderName);
     verified = await provider.verify(reference);
   } catch (err) {
     console.error("Verify failed for", reference, err);

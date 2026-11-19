@@ -39,16 +39,10 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         <RouteFade />
-<div className="flex min-h-screen flex-col">
-  <div className="flex-1">
-    <RouteFade />
-<div className="flex min-h-screen flex-col">
-  <div className="flex-1">{children}</div>
-  <SiteFooter />
-</div>
-  </div>
-  <SiteFooter />
-</div>
+        <div className="flex min-h-screen flex-col">
+          <div className="flex-1">{children}</div>
+          <SiteFooter />
+        </div>
       </body>
     </html>
   );
